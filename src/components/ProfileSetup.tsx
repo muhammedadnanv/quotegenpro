@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Upload, User, Linkedin, ArrowRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+
 interface ProfileSetupProps {
   onComplete: (data: {
     name: string;
@@ -13,24 +15,35 @@ interface ProfileSetupProps {
     title?: string;
   }) => void;
 }
-export const ProfileSetup = ({
-  onComplete
-}: ProfileSetupProps) => {
+
+export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [profileImage, setProfileImage] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const reader = new FileReader();
-      reader.onload = e => {
-        setProfileImage(e.target?.result as string);
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setProfileImage(result);
       };
       reader.readAsDataURL(file);
     }
   };
+
   const handleLinkedInConnect = async () => {
     setIsLoading(true);
 
@@ -46,6 +59,7 @@ export const ProfileSetup = ({
       });
     }, 2000);
   };
+
   const handleContinue = () => {
     if (!name.trim()) {
       toast({
@@ -55,21 +69,24 @@ export const ProfileSetup = ({
       });
       return;
     }
+
     onComplete({
       name: name.trim(),
       image: profileImage,
       title: title.trim() || undefined
     });
   };
-  return <div className="max-w-2xl mx-auto">
+
+  return (
+    <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Set Up Your Profile</h2>
-        <p className="text-lg text-gray-600">
+        <h2 className="text-3xl font-bold text-foreground mb-4">Set Up Your Profile</h2>
+        <p className="text-lg text-muted-foreground">
           Connect your LinkedIn or manually enter your information to get started
         </p>
       </div>
 
-      <Card className="shadow-lg">
+      <Card className="shadow-lg border-border">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <User className="h-5 w-5" />
@@ -82,18 +99,35 @@ export const ProfileSetup = ({
         <CardContent className="space-y-6">
           {/* LinkedIn Integration */}
           <div className="text-center">
-            
-            <p className="text-sm text-gray-500 mt-2">
+            <Button 
+              onClick={handleLinkedInConnect}
+              disabled={isLoading}
+              className="bg-linkedin-blue hover:bg-linkedin-dark-blue text-white w-full"
+              size="lg"
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <Linkedin className="h-5 w-5 mr-2" />
+                  Connect LinkedIn Profile
+                </>
+              )}
+            </Button>
+            <p className="text-sm text-muted-foreground mt-2">
               Automatically import your profile photo and details
             </p>
           </div>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-300" />
+              <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-4 text-gray-500">Or enter manually</span>
+              <span className="bg-background px-4 text-muted-foreground">Or enter manually</span>
             </div>
           </div>
 
@@ -108,31 +142,57 @@ export const ProfileSetup = ({
                 </AvatarFallback>
               </Avatar>
               
-              <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="w-fit">
+              <Button 
+                variant="outline" 
+                onClick={() => fileInputRef.current?.click()} 
+                className="w-fit border-linkedin-blue text-linkedin-blue hover:bg-linkedin-blue hover:text-white"
+              >
                 <Upload className="h-4 w-4 mr-2" />
                 Upload Photo
               </Button>
-              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+              <input 
+                ref={fileInputRef} 
+                type="file" 
+                accept="image/*" 
+                onChange={handleImageUpload} 
+                className="hidden" 
+              />
             </div>
 
             {/* Name Input */}
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>
-              <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Enter your full name" className="text-lg" />
+              <Input 
+                id="name" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                placeholder="Enter your full name" 
+                className="text-lg" 
+              />
             </div>
 
             {/* Title Input */}
             <div className="space-y-2">
               <Label htmlFor="title">Professional Title (Optional)</Label>
-              <Input id="title" value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g., Software Engineer, Marketing Manager" />
+              <Input 
+                id="title" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+                placeholder="e.g., Software Engineer, Marketing Manager" 
+              />
             </div>
           </div>
 
-          <Button onClick={handleContinue} className="w-full text-lg py-6" size="lg">
+          <Button 
+            onClick={handleContinue} 
+            className="w-full text-lg py-6 bg-linkedin-blue hover:bg-linkedin-dark-blue text-white" 
+            size="lg"
+          >
             Continue to Templates
             <ArrowRight className="h-5 w-5 ml-2" />
           </Button>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };

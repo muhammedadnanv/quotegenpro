@@ -38,11 +38,11 @@ const Index = () => {
   const handleBackToHome = () => {
     setCurrentStep('home');
     setProfileData(null);
+    setSelectedTemplate('modern');
   };
 
   const handleBackToProfile = () => {
     setCurrentStep('profile');
-    setProfileData(null);
   };
 
   const handleBackToTemplate = () => {

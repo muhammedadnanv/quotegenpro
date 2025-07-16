@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 interface QuoteCanvasProps {
@@ -58,7 +59,7 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
     const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number) => {
       const words = text.split(' ');
       const lines = [];
-      let currentLine = words[0];
+      let currentLine = words[0] || '';
 
       for (let i = 1; i < words.length; i++) {
         const word = words[i];
@@ -81,117 +82,135 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Set canvas size for high quality
-      const scale = window.devicePixelRatio || 1;
-      const width = 1080;
-      const height = 1080;
-      
-      canvas.width = width * scale;
-      canvas.height = height * scale;
-      canvas.style.width = `${Math.min(width, 500)}px`;
-      canvas.style.height = `${Math.min(height, 500)}px`;
-      
-      ctx.scale(scale, scale);
+      try {
+        // Set canvas size for high quality
+        const scale = window.devicePixelRatio || 1;
+        const width = 1080;
+        const height = 1080;
+        
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        canvas.style.width = `${Math.min(width, 500)}px`;
+        canvas.style.height = `${Math.min(height, 500)}px`;
+        
+        ctx.scale(scale, scale);
 
-      const style = getTemplateStyle(templateId);
+        const style = getTemplateStyle(templateId);
 
-      // Draw background
-      if (style.background.startsWith('linear-gradient')) {
-        // Parse gradient
-        const gradient = ctx.createLinearGradient(0, 0, width, height);
-        if (templateId === 'modern') {
-          gradient.addColorStop(0, '#0077b5');
-          gradient.addColorStop(1, '#004182');
-        } else if (templateId === 'dark') {
-          gradient.addColorStop(0, '#1f2937');
-          gradient.addColorStop(1, '#111827');
-        } else if (templateId === 'corporate') {
-          gradient.addColorStop(0, '#004182');
-          gradient.addColorStop(1, '#1e3a8a');
-        } else if (templateId === 'creative') {
-          gradient.addColorStop(0, '#0077b5');
-          gradient.addColorStop(1, '#ffd700');
-        } else if (templateId === 'elegant') {
-          gradient.addColorStop(0, '#4b5563');
-          gradient.addColorStop(1, '#374151');
+        // Clear canvas first
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw background
+        if (style.background.startsWith('linear-gradient')) {
+          // Parse gradient
+          const gradient = ctx.createLinearGradient(0, 0, width, height);
+          if (templateId === 'modern') {
+            gradient.addColorStop(0, '#0077b5');
+            gradient.addColorStop(1, '#004182');
+          } else if (templateId === 'dark') {
+            gradient.addColorStop(0, '#1f2937');
+            gradient.addColorStop(1, '#111827');
+          } else if (templateId === 'corporate') {
+            gradient.addColorStop(0, '#004182');
+            gradient.addColorStop(1, '#1e3a8a');
+          } else if (templateId === 'creative') {
+            gradient.addColorStop(0, '#0077b5');
+            gradient.addColorStop(1, '#ffd700');
+          } else if (templateId === 'elegant') {
+            gradient.addColorStop(0, '#4b5563');
+            gradient.addColorStop(1, '#374151');
+          }
+          ctx.fillStyle = gradient;
+        } else {
+          ctx.fillStyle = style.background;
         }
-        ctx.fillStyle = gradient;
-      } else {
-        ctx.fillStyle = style.background;
-      }
-      ctx.fillRect(0, 0, width, height);
+        ctx.fillRect(0, 0, width, height);
 
-      // Draw quote text
-      ctx.fillStyle = style.textColor;
-      ctx.font = `${fontSize}px ${fontFamily}`;
-      ctx.textAlign = textAlign;
+        // Draw quote text
+        if (quoteText && quoteText.trim()) {
+          ctx.fillStyle = style.textColor;
+          ctx.font = `${fontSize}px ${fontFamily}`;
+          ctx.textAlign = textAlign;
 
-      const maxWidth = width - 120;
-      const lines = wrapText(ctx, `"${quoteText}"`, maxWidth);
-      
-      const lineHeight = fontSize * 1.4;
-      const totalTextHeight = lines.length * lineHeight;
-      const startY = (height - totalTextHeight - 200) / 2; // Leave space for profile
-
-      let x = width / 2;
-      if (textAlign === 'left') x = 60;
-      if (textAlign === 'right') x = width - 60;
-
-      lines.forEach((line, index) => {
-        ctx.fillText(line, x, startY + index * lineHeight);
-      });
-
-      // Draw profile section
-      const profileY = startY + totalTextHeight + 80;
-
-      // Draw profile image if available
-      if (profileData.image) {
-        try {
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
+          const maxWidth = width - 120;
+          const displayText = quoteText.startsWith('"') ? quoteText : `"${quoteText}"`;
+          const lines = wrapText(ctx, displayText, maxWidth);
           
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => {
-              const imageSize = 80;
-              const imageX = (width - imageSize) / 2;
-              
-              // Draw circular image
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
-              ctx.clip();
-              ctx.drawImage(img, imageX, profileY - imageSize/2, imageSize, imageSize);
-              ctx.restore();
-              
-              // Draw border
-              ctx.strokeStyle = style.accentColor;
-              ctx.lineWidth = 3;
-              ctx.beginPath();
-              ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
-              ctx.stroke();
-              
-              resolve();
-            };
-            img.onerror = reject;
+          const lineHeight = fontSize * 1.4;
+          const totalTextHeight = lines.length * lineHeight;
+          const startY = (height - totalTextHeight - 200) / 2; // Leave space for profile
+
+          let x = width / 2;
+          if (textAlign === 'left') x = 60;
+          if (textAlign === 'right') x = width - 60;
+
+          lines.forEach((line, index) => {
+            ctx.fillText(line, x, startY + index * lineHeight);
           });
-          
-          img.src = profileData.image;
-        } catch (error) {
-          console.log('Could not load profile image:', error);
+
+          // Draw profile section
+          const profileY = startY + totalTextHeight + 80;
+
+          // Draw profile image if available
+          if (profileData.image) {
+            try {
+              const img = new Image();
+              img.crossOrigin = 'anonymous';
+              
+              await new Promise<void>((resolve, reject) => {
+                img.onload = () => {
+                  const imageSize = 80;
+                  const imageX = (width - imageSize) / 2;
+                  
+                  // Draw circular image
+                  ctx.save();
+                  ctx.beginPath();
+                  ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
+                  ctx.clip();
+                  ctx.drawImage(img, imageX, profileY - imageSize/2, imageSize, imageSize);
+                  ctx.restore();
+                  
+                  // Draw border
+                  ctx.strokeStyle = style.accentColor;
+                  ctx.lineWidth = 3;
+                  ctx.beginPath();
+                  ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
+                  ctx.stroke();
+                  
+                  resolve();
+                };
+                img.onerror = () => {
+                  console.log('Failed to load profile image');
+                  resolve(); // Continue without image
+                };
+                
+                // Add timeout for image loading
+                setTimeout(() => {
+                  reject(new Error('Image loading timeout'));
+                }, 5000);
+              });
+              
+              img.src = profileData.image;
+            } catch (error) {
+              console.log('Could not load profile image:', error);
+            }
+          }
+
+          // Draw name
+          ctx.fillStyle = style.textColor;
+          ctx.font = `bold 28px ${fontFamily}`;
+          ctx.textAlign = 'center';
+          ctx.fillText(profileData.name, width / 2, profileY + 60);
+
+          // Draw title if available
+          if (profileData.title) {
+            ctx.fillStyle = style.accentColor;
+            ctx.font = `20px ${fontFamily}`;
+            ctx.fillText(profileData.title, width / 2, profileY + 90);
+          }
         }
-      }
-
-      // Draw name
-      ctx.fillStyle = style.textColor;
-      ctx.font = `bold 28px ${fontFamily}`;
-      ctx.textAlign = 'center';
-      ctx.fillText(profileData.name, width / 2, profileY + 60);
-
-      // Draw title if available
-      if (profileData.title) {
-        ctx.fillStyle = style.accentColor;
-        ctx.font = `20px ${fontFamily}`;
-        ctx.fillText(profileData.title, width / 2, profileY + 90);
+      } catch (error) {
+        console.error('Canvas drawing error:', error);
       }
     };
 
