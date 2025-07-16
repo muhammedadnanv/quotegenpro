@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				linkedin: {
+					blue: 'hsl(var(--linkedin-blue))',
+					gold: 'hsl(var(--linkedin-gold))',
+					'dark-blue': 'hsl(var(--linkedin-dark-blue))',
+					'light-blue': 'hsl(var(--linkedin-light-blue))',
+					gray: 'hsl(var(--linkedin-gray))',
+					'light-gray': 'hsl(var(--linkedin-light-gray))'
 				}
 			},
 			borderRadius: {
@@ -84,11 +93,31 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'spin-slow': {
+					from: {
+						transform: 'rotate(0deg)'
+					},
+					to: {
+						transform: 'rotate(360deg)'
+					}
+				},
+				'fade-in': {
+					from: {
+						opacity: '0',
+						transform: 'translateY(20px)'
+					},
+					to: {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'spin-slow': 'spin-slow 2s linear infinite',
+				'fade-in': 'fade-in 0.6s ease-out'
 			}
 		}
 	},

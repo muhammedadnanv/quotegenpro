@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
 interface QuoteCanvasProps {
@@ -23,27 +22,27 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
     const getTemplateStyle = (templateId: string) => {
       const styles = {
         modern: {
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #0077b5 0%, #004182 100%)',
           textColor: '#ffffff',
-          accentColor: '#ffffff',
+          accentColor: '#ffd700',
         },
         minimal: {
           background: '#ffffff',
           textColor: '#1f2937',
-          accentColor: '#3b82f6',
+          accentColor: '#0077b5',
         },
         dark: {
           background: 'linear-gradient(135deg, #1f2937 0%, #111827 100%)',
           textColor: '#ffffff',
-          accentColor: '#60a5fa',
+          accentColor: '#0077b5',
         },
         corporate: {
-          background: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)',
+          background: 'linear-gradient(135deg, #004182 0%, #1e3a8a 100%)',
           textColor: '#ffffff',
           accentColor: '#93c5fd',
         },
         creative: {
-          background: 'linear-gradient(135deg, #ec4899 0%, #f97316 100%)',
+          background: 'linear-gradient(135deg, #0077b5 0%, #ffd700 100%)',
           textColor: '#ffffff',
           accentColor: '#ffffff',
         },
@@ -101,17 +100,17 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
         // Parse gradient
         const gradient = ctx.createLinearGradient(0, 0, width, height);
         if (templateId === 'modern') {
-          gradient.addColorStop(0, '#667eea');
-          gradient.addColorStop(1, '#764ba2');
+          gradient.addColorStop(0, '#0077b5');
+          gradient.addColorStop(1, '#004182');
         } else if (templateId === 'dark') {
           gradient.addColorStop(0, '#1f2937');
           gradient.addColorStop(1, '#111827');
         } else if (templateId === 'corporate') {
-          gradient.addColorStop(0, '#1e40af');
+          gradient.addColorStop(0, '#004182');
           gradient.addColorStop(1, '#1e3a8a');
         } else if (templateId === 'creative') {
-          gradient.addColorStop(0, '#ec4899');
-          gradient.addColorStop(1, '#f97316');
+          gradient.addColorStop(0, '#0077b5');
+          gradient.addColorStop(1, '#ffd700');
         } else if (templateId === 'elegant') {
           gradient.addColorStop(0, '#4b5563');
           gradient.addColorStop(1, '#374151');
@@ -203,7 +202,7 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
     return (
       <canvas
         ref={canvasRef}
-        className="border border-gray-200 rounded-lg shadow-lg max-w-full h-auto"
+        className="border border-border rounded-lg shadow-lg max-w-full h-auto"
       />
     );
   }

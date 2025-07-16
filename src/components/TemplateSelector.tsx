@@ -12,38 +12,38 @@ interface TemplateSelectorProps {
 const templates = [
   {
     id: 'modern',
-    name: 'Modern',
-    description: 'Clean and professional with gradient background',
-    preview: 'bg-gradient-to-br from-blue-600 to-purple-600',
+    name: 'LinkedIn Premium',
+    description: 'Professional LinkedIn blue theme with premium styling',
+    preview: 'bg-gradient-to-br from-linkedin-blue to-linkedin-dark-blue',
   },
   {
     id: 'minimal',
-    name: 'Minimal',
+    name: 'Clean White',
     description: 'Simple white background with elegant typography',
-    preview: 'bg-white border-2 border-gray-200',
+    preview: 'bg-white border-2 border-border',
   },
   {
     id: 'dark',
-    name: 'Dark Theme',
-    description: 'Dark background with bright accent colors',
+    name: 'Professional Dark',
+    description: 'Dark theme with LinkedIn blue accents',
     preview: 'bg-gradient-to-br from-gray-900 to-black',
   },
   {
     id: 'corporate',
-    name: 'Corporate',
-    description: 'Professional blue theme for business content',
-    preview: 'bg-gradient-to-br from-blue-800 to-blue-900',
+    name: 'Corporate Blue',
+    description: 'Deep blue theme for business professionals',
+    preview: 'bg-gradient-to-br from-linkedin-dark-blue to-blue-900',
   },
   {
     id: 'creative',
-    name: 'Creative',
-    description: 'Vibrant colors for creative professionals',
-    preview: 'bg-gradient-to-br from-pink-500 to-orange-500',
+    name: 'Creative Gold',
+    description: 'LinkedIn blue with gold accents for creative professionals',
+    preview: 'bg-gradient-to-br from-linkedin-blue to-linkedin-gold',
   },
   {
     id: 'elegant',
-    name: 'Elegant',
-    description: 'Sophisticated design with subtle gradients',
+    name: 'Executive Gray',
+    description: 'Sophisticated gray design for executives',
     preview: 'bg-gradient-to-br from-gray-600 to-gray-800',
   },
 ];
@@ -58,9 +58,9 @@ export const TemplateSelector = ({ onSelect, onBack }: TemplateSelectorProps) =>
   return (
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Choose Your Template</h2>
-        <p className="text-lg text-gray-600">
-          Select a design template that matches your style and brand
+        <h2 className="text-3xl font-bold text-foreground mb-4">Choose Your Template</h2>
+        <p className="text-lg text-muted-foreground">
+          Select a design template that matches your professional style and brand
         </p>
       </div>
 
@@ -68,10 +68,10 @@ export const TemplateSelector = ({ onSelect, onBack }: TemplateSelectorProps) =>
         {templates.map((template) => (
           <Card
             key={template.id}
-            className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
+            className={`cursor-pointer transition-all duration-200 hover:shadow-lg border-2 ${
               selectedTemplate === template.id
-                ? 'ring-2 ring-blue-500 shadow-lg'
-                : 'hover:shadow-md'
+                ? 'border-linkedin-blue shadow-lg ring-2 ring-linkedin-blue/20'
+                : 'border-border hover:border-linkedin-blue/50'
             }`}
             onClick={() => setSelectedTemplate(template.id)}
           >
@@ -79,33 +79,42 @@ export const TemplateSelector = ({ onSelect, onBack }: TemplateSelectorProps) =>
               <div className={`${template.preview} h-32 rounded-lg mb-4 relative overflow-hidden`}>
                 {/* Mock quote preview */}
                 <div className="absolute inset-4 flex items-center justify-center">
-                  <div className={`text-center ${template.id === 'minimal' ? 'text-gray-800' : 'text-white'}`}>
+                  <div className={`text-center ${template.id === 'minimal' ? 'text-foreground' : 'text-white'}`}>
                     <div className="text-sm font-medium mb-1">"Sample Quote"</div>
                     <div className="text-xs opacity-75">Your Name</div>
                   </div>
                 </div>
                 
                 {selectedTemplate === template.id && (
-                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                  <div className="absolute top-2 right-2 bg-linkedin-blue text-white rounded-full p-1">
                     <Check className="h-4 w-4" />
                   </div>
                 )}
               </div>
               
-              <h3 className="font-semibold text-lg mb-2">{template.name}</h3>
-              <p className="text-gray-600 text-sm">{template.description}</p>
+              <h3 className="font-semibold text-lg mb-2 text-foreground">{template.name}</h3>
+              <p className="text-muted-foreground text-sm">{template.description}</p>
             </CardContent>
           </Card>
         ))}
       </div>
 
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack} size="lg">
+        <Button 
+          variant="outline" 
+          onClick={onBack} 
+          size="lg"
+          className="border-linkedin-blue text-linkedin-blue hover:bg-linkedin-blue hover:text-white"
+        >
           <ArrowLeft className="h-5 w-5 mr-2" />
           Back to Profile
         </Button>
         
-        <Button onClick={handleContinue} size="lg">
+        <Button 
+          onClick={handleContinue} 
+          size="lg"
+          className="bg-linkedin-blue hover:bg-linkedin-dark-blue text-white"
+        >
           Continue to Editor
           <ArrowRight className="h-5 w-5 ml-2" />
         </Button>
