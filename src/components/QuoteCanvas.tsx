@@ -75,6 +75,31 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
       return lines;
     };
 
+    const loadImageSafely = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        
+        const timeoutId = setTimeout(() => {
+          img.onload = null;
+          img.onerror = null;
+          reject(new Error('Image loading timeout'));
+        }, 3000); // Reduced timeout to 3 seconds
+        
+        img.onload = () => {
+          clearTimeout(timeoutId);
+          resolve(img);
+        };
+        
+        img.onerror = () => {
+          clearTimeout(timeoutId);
+          reject(new Error('Failed to load image'));
+        };
+        
+        img.src = src;
+      });
+    };
+
     const drawCanvas = async () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -154,45 +179,43 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
           // Draw profile image if available
           if (profileData.image) {
             try {
-              const img = new Image();
-              img.crossOrigin = 'anonymous';
+              const img = await loadImageSafely(profileData.image);
               
-              await new Promise<void>((resolve, reject) => {
-                img.onload = () => {
-                  const imageSize = 80;
-                  const imageX = (width - imageSize) / 2;
-                  
-                  // Draw circular image
-                  ctx.save();
-                  ctx.beginPath();
-                  ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
-                  ctx.clip();
-                  ctx.drawImage(img, imageX, profileY - imageSize/2, imageSize, imageSize);
-                  ctx.restore();
-                  
-                  // Draw border
-                  ctx.strokeStyle = style.accentColor;
-                  ctx.lineWidth = 3;
-                  ctx.beginPath();
-                  ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
-                  ctx.stroke();
-                  
-                  resolve();
-                };
-                img.onerror = () => {
-                  console.log('Failed to load profile image');
-                  resolve(); // Continue without image
-                };
-                
-                // Add timeout for image loading
-                setTimeout(() => {
-                  reject(new Error('Image loading timeout'));
-                }, 5000);
-              });
+              const imageSize = 80;
+              const imageX = (width - imageSize) / 2;
               
-              img.src = profileData.image;
+              // Draw circular image
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
+              ctx.clip();
+              ctx.drawImage(img, imageX, profileY - imageSize/2, imageSize, imageSize);
+              ctx.restore();
+              
+              // Draw border
+              ctx.strokeStyle = style.accentColor;
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
+              ctx.stroke();
             } catch (error) {
-              console.log('Could not load profile image:', error);
+              console.log('Could not load profile image, continuing without it');
+              
+              // Draw fallback circle with initials
+              const imageSize = 80;
+              const imageX = (width - imageSize) / 2;
+              
+              ctx.fillStyle = style.accentColor;
+              ctx.beginPath();
+              ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
+              ctx.fill();
+              
+              // Draw initials
+              ctx.fillStyle = style.background.includes('gradient') ? '#000000' : style.textColor;
+              ctx.font = `bold 24px ${fontFamily}`;
+              ctx.textAlign = 'center';
+              const initials = profileData.name.split(' ').map(n => n[0]).join('').toUpperCase();
+              ctx.fillText(initials, imageX + imageSize/2, profileY + 8);
             }
           }
 

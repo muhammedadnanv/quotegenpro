@@ -35,10 +35,30 @@ export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
         return;
       }
 
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select a valid image file.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setProfileImage(result);
+        toast({
+          title: "Image uploaded",
+          description: "Your profile image has been uploaded successfully."
+        });
+      };
+      reader.onerror = () => {
+        toast({
+          title: "Upload failed",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive"
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -137,7 +157,7 @@ export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24">
                 <AvatarImage src={profileImage} />
-                <AvatarFallback className="text-2xl">
+                <AvatarFallback className="text-2xl bg-linkedin-light-blue text-white">
                   {name.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
