@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 
 interface TemplateSelectorProps {
@@ -12,44 +12,44 @@ interface TemplateSelectorProps {
 const templates = [
   {
     id: 'modern',
-    name: 'LinkedIn Premium',
-    description: 'Professional LinkedIn blue theme with premium styling',
-    preview: 'bg-gradient-to-br from-linkedin-blue to-linkedin-dark-blue',
+    name: 'Modern',
+    description: 'Clean and professional with LinkedIn blue gradients',
+    preview: 'bg-gradient-to-br from-linkedin-blue to-linkedin-dark-blue'
   },
   {
     id: 'minimal',
-    name: 'Clean White',
-    description: 'Simple white background with elegant typography',
-    preview: 'bg-white border-2 border-border',
+    name: 'Minimal',
+    description: 'Simple white background with clean typography',
+    preview: 'bg-white border-2 border-border'
   },
   {
     id: 'dark',
-    name: 'Professional Dark',
-    description: 'Dark theme with LinkedIn blue accents',
-    preview: 'bg-gradient-to-br from-gray-900 to-black',
+    name: 'Dark',
+    description: 'Elegant dark theme with blue accents',
+    preview: 'bg-gradient-to-br from-gray-800 to-gray-900'
   },
   {
     id: 'corporate',
-    name: 'Corporate Blue',
-    description: 'Deep blue theme for business professionals',
-    preview: 'bg-gradient-to-br from-linkedin-dark-blue to-blue-900',
+    name: 'Corporate',
+    description: 'Professional blue gradient for business content',
+    preview: 'bg-gradient-to-br from-blue-800 to-blue-900'
   },
   {
     id: 'creative',
-    name: 'Creative Gold',
-    description: 'LinkedIn blue with gold accents for creative professionals',
-    preview: 'bg-gradient-to-br from-linkedin-blue to-linkedin-gold',
+    name: 'Creative',
+    description: 'Vibrant blue to gold gradient for creative posts',
+    preview: 'bg-gradient-to-br from-linkedin-blue to-linkedin-gold'
   },
   {
     id: 'elegant',
-    name: 'Executive Gray',
-    description: 'Sophisticated gray design for executives',
-    preview: 'bg-gradient-to-br from-gray-600 to-gray-800',
-  },
+    name: 'Elegant',
+    description: 'Sophisticated gray tones with subtle accents',
+    preview: 'bg-gradient-to-br from-gray-600 to-gray-700'
+  }
 ];
 
 export const TemplateSelector = ({ onSelect, onBack }: TemplateSelectorProps) => {
-  const [selectedTemplate, setSelectedTemplate] = useState('modern');
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('modern');
 
   const handleContinue = () => {
     onSelect(selectedTemplate);
@@ -60,63 +60,56 @@ export const TemplateSelector = ({ onSelect, onBack }: TemplateSelectorProps) =>
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-foreground mb-4">Choose Your Template</h2>
         <p className="text-lg text-muted-foreground">
-          Select a design template that matches your professional style and brand
+          Select a template that matches your style and brand
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {templates.map((template) => (
-          <Card
+          <Card 
             key={template.id}
-            className={`cursor-pointer transition-all duration-200 hover:shadow-lg border-2 ${
-              selectedTemplate === template.id
-                ? 'border-linkedin-blue shadow-lg ring-2 ring-linkedin-blue/20'
-                : 'border-border hover:border-linkedin-blue/50'
+            className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
+              selectedTemplate === template.id 
+                ? 'ring-2 ring-linkedin-blue border-linkedin-blue' 
+                : 'hover:border-linkedin-blue/50'
             }`}
             onClick={() => setSelectedTemplate(template.id)}
           >
-            <CardContent className="p-6">
-              <div className={`${template.preview} h-32 rounded-lg mb-4 relative overflow-hidden`}>
-                {/* Mock quote preview */}
-                <div className="absolute inset-4 flex items-center justify-center">
-                  <div className={`text-center ${template.id === 'minimal' ? 'text-foreground' : 'text-white'}`}>
-                    <div className="text-sm font-medium mb-1">"Sample Quote"</div>
-                    <div className="text-xs opacity-75">Your Name</div>
-                  </div>
+            <CardContent className="p-4">
+              <div className={`w-full h-32 rounded-lg mb-4 flex items-center justify-center ${template.preview}`}>
+                <div className="text-white text-center">
+                  <div className="text-lg font-semibold mb-2">"Sample Quote"</div>
+                  <div className="text-sm opacity-90">Your Name</div>
                 </div>
-                
                 {selectedTemplate === template.id && (
-                  <div className="absolute top-2 right-2 bg-linkedin-blue text-white rounded-full p-1">
-                    <Check className="h-4 w-4" />
+                  <div className="absolute top-2 right-2 bg-linkedin-blue rounded-full p-1">
+                    <Check className="h-4 w-4 text-white" />
                   </div>
                 )}
               </div>
-              
-              <h3 className="font-semibold text-lg mb-2 text-foreground">{template.name}</h3>
-              <p className="text-muted-foreground text-sm">{template.description}</p>
+              <CardHeader className="p-0">
+                <CardTitle className="text-lg">{template.name}</CardTitle>
+                <CardDescription className="text-sm">
+                  {template.description}
+                </CardDescription>
+              </CardHeader>
             </CardContent>
           </Card>
         ))}
       </div>
 
       <div className="flex justify-between">
-        <Button 
-          variant="outline" 
-          onClick={onBack} 
-          size="lg"
-          className="border-linkedin-blue text-linkedin-blue hover:bg-linkedin-blue hover:text-white"
-        >
-          <ArrowLeft className="h-5 w-5 mr-2" />
+        <Button variant="outline" onClick={onBack}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Profile
         </Button>
         
         <Button 
-          onClick={handleContinue} 
-          size="lg"
+          onClick={handleContinue}
           className="bg-linkedin-blue hover:bg-linkedin-dark-blue text-white"
         >
           Continue to Editor
-          <ArrowRight className="h-5 w-5 ml-2" />
+          <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
       </div>
     </div>

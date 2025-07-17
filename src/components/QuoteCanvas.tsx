@@ -84,7 +84,7 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
           img.onload = null;
           img.onerror = null;
           reject(new Error('Image loading timeout'));
-        }, 3000); // Reduced timeout to 3 seconds
+        }, 5000);
         
         img.onload = () => {
           clearTimeout(timeoutId);
@@ -127,23 +127,31 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
 
         // Draw background
         if (style.background.startsWith('linear-gradient')) {
-          // Parse gradient
           const gradient = ctx.createLinearGradient(0, 0, width, height);
-          if (templateId === 'modern') {
-            gradient.addColorStop(0, '#0077b5');
-            gradient.addColorStop(1, '#004182');
-          } else if (templateId === 'dark') {
-            gradient.addColorStop(0, '#1f2937');
-            gradient.addColorStop(1, '#111827');
-          } else if (templateId === 'corporate') {
-            gradient.addColorStop(0, '#004182');
-            gradient.addColorStop(1, '#1e3a8a');
-          } else if (templateId === 'creative') {
-            gradient.addColorStop(0, '#0077b5');
-            gradient.addColorStop(1, '#ffd700');
-          } else if (templateId === 'elegant') {
-            gradient.addColorStop(0, '#4b5563');
-            gradient.addColorStop(1, '#374151');
+          switch (templateId) {
+            case 'modern':
+              gradient.addColorStop(0, '#0077b5');
+              gradient.addColorStop(1, '#004182');
+              break;
+            case 'dark':
+              gradient.addColorStop(0, '#1f2937');
+              gradient.addColorStop(1, '#111827');
+              break;
+            case 'corporate':
+              gradient.addColorStop(0, '#004182');
+              gradient.addColorStop(1, '#1e3a8a');
+              break;
+            case 'creative':
+              gradient.addColorStop(0, '#0077b5');
+              gradient.addColorStop(1, '#ffd700');
+              break;
+            case 'elegant':
+              gradient.addColorStop(0, '#4b5563');
+              gradient.addColorStop(1, '#374151');
+              break;
+            default:
+              gradient.addColorStop(0, '#0077b5');
+              gradient.addColorStop(1, '#004182');
           }
           ctx.fillStyle = gradient;
         } else {
@@ -154,7 +162,7 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
         // Draw quote text
         if (quoteText && quoteText.trim()) {
           ctx.fillStyle = style.textColor;
-          ctx.font = `${fontSize}px ${fontFamily}`;
+          ctx.font = `${fontSize}px "${fontFamily}", sans-serif`;
           ctx.textAlign = textAlign;
 
           const maxWidth = width - 120;
@@ -163,7 +171,7 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
           
           const lineHeight = fontSize * 1.4;
           const totalTextHeight = lines.length * lineHeight;
-          const startY = (height - totalTextHeight - 200) / 2; // Leave space for profile
+          const startY = (height - totalTextHeight - 200) / 2;
 
           let x = width / 2;
           if (textAlign === 'left') x = 60;
@@ -199,7 +207,7 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
               ctx.arc(imageX + imageSize/2, profileY, imageSize/2, 0, Math.PI * 2);
               ctx.stroke();
             } catch (error) {
-              console.log('Could not load profile image, continuing without it');
+              console.log('Could not load profile image, using fallback');
               
               // Draw fallback circle with initials
               const imageSize = 80;
@@ -211,8 +219,8 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
               ctx.fill();
               
               // Draw initials
-              ctx.fillStyle = style.background.includes('gradient') ? '#000000' : style.textColor;
-              ctx.font = `bold 24px ${fontFamily}`;
+              ctx.fillStyle = templateId === 'minimal' ? '#1f2937' : '#ffffff';
+              ctx.font = `bold 24px "${fontFamily}", sans-serif`;
               ctx.textAlign = 'center';
               const initials = profileData.name.split(' ').map(n => n[0]).join('').toUpperCase();
               ctx.fillText(initials, imageX + imageSize/2, profileY + 8);
@@ -221,14 +229,14 @@ export const QuoteCanvas = forwardRef<HTMLCanvasElement, QuoteCanvasProps>(
 
           // Draw name
           ctx.fillStyle = style.textColor;
-          ctx.font = `bold 28px ${fontFamily}`;
+          ctx.font = `bold 28px "${fontFamily}", sans-serif`;
           ctx.textAlign = 'center';
           ctx.fillText(profileData.name, width / 2, profileY + 60);
 
           // Draw title if available
           if (profileData.title) {
             ctx.fillStyle = style.accentColor;
-            ctx.font = `20px ${fontFamily}`;
+            ctx.font = `20px "${fontFamily}", sans-serif`;
             ctx.fillText(profileData.title, width / 2, profileY + 90);
           }
         }

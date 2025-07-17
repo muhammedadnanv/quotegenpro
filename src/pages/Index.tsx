@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/Header';
 import { QuoteEditor } from '@/components/QuoteEditor';
 import { ProfileSetup } from '@/components/ProfileSetup';

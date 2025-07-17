@@ -26,6 +26,7 @@ export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "File too large",
@@ -35,6 +36,7 @@ export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
         return;
       }
 
+      // Validate file type
       if (!file.type.startsWith('image/')) {
         toast({
           title: "Invalid file type",
@@ -66,13 +68,34 @@ export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
 
   const handleLinkedInConnect = async () => {
     setIsLoading(true);
-
-    // Simulate LinkedIn API call
+    
+    // Simulate LinkedIn API call with realistic data
     setTimeout(() => {
-      setName('John Doe');
-      setTitle('Software Engineer at Tech Corp');
-      setProfileImage('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face');
+      const mockProfiles = [
+        {
+          name: 'John Doe',
+          title: 'Software Engineer at Tech Corp',
+          image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+        },
+        {
+          name: 'Jane Smith',
+          title: 'Marketing Manager at Digital Agency',
+          image: 'https://images.unsplash.com/photo-1494790108755-2616b9c5c2bb?w=400&h=400&fit=crop&crop=face'
+        },
+        {
+          name: 'Alex Johnson',
+          title: 'Product Designer at Innovation Lab',
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face'
+        }
+      ];
+      
+      const randomProfile = mockProfiles[Math.floor(Math.random() * mockProfiles.length)];
+      
+      setName(randomProfile.name);
+      setTitle(randomProfile.title);
+      setProfileImage(randomProfile.image);
       setIsLoading(false);
+      
       toast({
         title: "LinkedIn Profile Loaded",
         description: "Your profile information has been imported successfully."
@@ -156,7 +179,7 @@ export const ProfileSetup = ({ onComplete }: ProfileSetupProps) => {
             {/* Profile Image */}
             <div className="flex flex-col items-center space-y-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={profileImage} />
+                <AvatarImage src={profileImage} alt="Profile" />
                 <AvatarFallback className="text-2xl bg-linkedin-light-blue text-white">
                   {name.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
