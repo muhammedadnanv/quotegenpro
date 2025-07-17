@@ -56,20 +56,6 @@ export const QuoteEditor = ({ profileData, templateId, onBackToTemplate }: Quote
     }
   }, []);
 
-  const handleShare = () => {
-    if (navigator.share && canvasRef.current) {
-      canvasRef.current.toBlob((blob) => {
-        if (blob) {
-          const file = new File([blob], 'quote.png', { type: 'image/png' });
-          navigator.share({
-            files: [file],
-            title: 'Check out my quote!',
-          });
-        }
-      });
-    }
-  };
-
   return (
     <div className="max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -163,7 +149,7 @@ export const QuoteEditor = ({ profileData, templateId, onBackToTemplate }: Quote
                 <span>Export</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent>
               <Button 
                 onClick={handleDownload}
                 disabled={isGenerating}
@@ -177,16 +163,6 @@ export const QuoteEditor = ({ profileData, templateId, onBackToTemplate }: Quote
                 )}
                 Download Quote
               </Button>
-              
-              {navigator.share && (
-                <Button 
-                  variant="outline"
-                  onClick={handleShare}
-                  className="w-full"
-                >
-                  Share Quote
-                </Button>
-              )}
             </CardContent>
           </Card>
         </div>
