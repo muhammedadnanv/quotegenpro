@@ -1,7 +1,7 @@
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Quote, Users, Download, Star, ArrowRight, CheckCircle } from 'lucide-react';
+import { DonationSection } from '@/components/DonationSection';
 
 interface HomeProps {
   onGetStarted: () => void;
@@ -147,6 +147,9 @@ export const Home = ({ onGetStarted }: HomeProps) => {
           </div>
         </div>
       </section>
+
+      {/* Donation Section */}
+      <DonationSection />
 
       {/* CTA Section */}
       <section className="py-20 px-4">

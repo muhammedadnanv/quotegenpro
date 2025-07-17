@@ -6,6 +6,7 @@ import { ProfileSetup } from '@/components/ProfileSetup';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { SplashScreen } from '@/components/SplashScreen';
 import { Home } from '@/pages/Home';
+import { Watermark } from '@/components/Watermark';
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -81,6 +82,8 @@ const Index = () => {
           />
         )}
       </main>
+
+      <Watermark />
     </div>
   );
 };
